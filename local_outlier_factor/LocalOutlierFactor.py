@@ -6,7 +6,7 @@
 @software: garner
 @file: LocalOutlierFactor.py
 @time: 18-8-14 下午10:34
-@desc:
+@desc:  参考 https://blog.csdn.net/wangyibo0201/article/details/51705966
 '''
 from matplotlib import pyplot as plt
 import numpy as np

@@ -6,7 +6,7 @@
 @software: garner
 @file: DBSCAN.py
 @time: 18-8-19 上午10:42
-@desc:  https://www.cnblogs.com/pinard/p/6208966.html
+@desc:  参考: https://www.cnblogs.com/pinard/p/6208966.html
 '''
 from sklearn.datasets.samples_generator import make_blobs
 import numpy as np
