@@ -10,6 +10,8 @@
 '''
 from matplotlib import pyplot as plt
 import numpy as np
+from util.distance import euclidean
+
 from itertools import combinations, combinations_with_replacement
 
 
@@ -18,7 +20,7 @@ class LocalOutlierFactor(object):
         self.instances = instances
         self.instance_num = len(instances)
         self.k = k
-        self.distance_function = self._euclidean
+        self.distance_function = euclidean
         # self.is_normalize = is_normalize
 
         self._compute_k_distance()

@@ -4,7 +4,7 @@
 @license: (C) Copyright 2013-2018, Node Supply Chain Manager Corporation Limited.
 @contact: deamoncao100@gmail.com
 @software: garner
-@file: DBSCAN.py
+@file: dbscan.py
 @time: 18-8-19 上午10:42
 @desc:  参考: https://www.cnblogs.com/pinard/p/6208966.html
 '''
