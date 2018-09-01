@@ -34,10 +34,29 @@ def discrete_entropy(vector):
     return entropy
 
 
+def gini(vector):
+    """
+    最大值为1，表示无序，均匀。
+    :param vector:
+    :return:
+    """
+    length = vector.shape[0]
+    if length == 0:
+        raise("向量长度为0")
+    counter = Counter(vector)
+
+    gini = 1
+    for value in counter.values():
+        P_i = value / length
+        gini -= P_i**2
+    return gini
+
+
 if __name__ == "__main__":
     # print(discrete_entropy(np.array([1, 1, 1, 1])))
     # print(discrete_entropy(np.array([1, 1, 1, 0])))
     print(discrete_entropy(np.array([1, 2, 3, 3, 2, 4, 6, 6])))
+    print(gini(np.array([1, 2, 3, 3, 2, 4, 6, 6])))
 
 
 

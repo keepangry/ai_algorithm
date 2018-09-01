@@ -9,3 +9,12 @@
 @desc:
 '''
 
+import numpy as np
+
+def mean_square(vector):
+    return np.square(vector - vector.mean()).sum()
+
+
+if __name__ == "__main__":
+    a = np.array([1,2,3])
+    print(mean_square(a))

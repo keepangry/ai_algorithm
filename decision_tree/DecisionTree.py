@@ -13,7 +13,7 @@
 '''
 from sklearn.datasets import load_iris
 from sklearn.tree import DecisionTreeClassifier
-from util.entropy import discrete_entropy
+from util.entropy import discrete_entropy, gini
 import numpy as np
 from collections import Counter
 from sklearn import datasets, neighbors, linear_model
@@ -37,7 +37,7 @@ class DecisionTree(object):
     def __init__(self, threshold=0):
         self.threshold = threshold
 
-    def fit(self, train_data, train_label, method='id3', is_continuous=False):
+    def fit(self, train_data, train_label, method='id3', is_continuous=False, info_gain='entropy'):
         self.train_data = train_data
         self.train_label = train_label
         self.labels = Counter(train_label).values()
@@ -48,6 +48,12 @@ class DecisionTree(object):
         self.feature_indexes = np.arange(self.feature_num)
         self.method = method
         self.is_continuous = is_continuous
+        self.info_gain = info_gain
+        if self.info_gain == 'entropy':
+            self.entropy = discrete_entropy
+        elif self.info_gain == 'gini':
+            self.entropy = gini
+
 
         ## 初始化，首先遍历每个特征的所有取值可能性
         self.feature_values = [list(set(self.train_data[:, feature_index])) for feature_index in
@@ -73,7 +79,7 @@ class DecisionTree(object):
         feature_values = self.feature_values[feature_index]
 
         # 混乱，熵大
-        origin_entropy = discrete_entropy(self.train_label[train_indexes])
+        origin_entropy = self.entropy(self.train_label[train_indexes])
 
         new_entropy = 0
         # 计算所有可能取值下，剩余的熵
@@ -81,7 +87,7 @@ class DecisionTree(object):
             label_vector = self.train_label[train_indexes] [ self.train_data[train_indexes][:,feature_index]==feature_value ]
 
             if label_vector.shape[0] != 0:
-                new_entropy += label_vector.shape[0]/train_indexes.shape[0] * discrete_entropy(label_vector)
+                new_entropy += label_vector.shape[0]/train_indexes.shape[0] * self.entropy(label_vector)
 
         if self.method!='id3':
             return (origin_entropy - new_entropy + 0.1) / (new_entropy + 0.1)
@@ -97,7 +103,7 @@ class DecisionTree(object):
         :return:
         """
         # 混乱，熵大
-        origin_entropy = discrete_entropy(self.train_label[train_indexes])
+        origin_entropy = self.entropy(self.train_label[train_indexes])
 
         new_entropy = 0
         # 计算所有可能取值下，剩余的熵
@@ -106,8 +112,8 @@ class DecisionTree(object):
             self.train_data[train_indexes][:, feature_index] < split_value]
         label_vector_right = self.train_label[train_indexes][
             self.train_data[train_indexes][:, feature_index] >= split_value]
-        new_entropy = label_vector_left.shape[0] / train_indexes.shape[0] * discrete_entropy(label_vector_left) + \
-                      label_vector_right.shape[0] / train_indexes.shape[0] * discrete_entropy(label_vector_right)
+        new_entropy = label_vector_left.shape[0] / train_indexes.shape[0] * self.entropy(label_vector_left) + \
+                      label_vector_right.shape[0] / train_indexes.shape[0] * self.entropy(label_vector_right)
         if self.method != 'id3':
             return (origin_entropy - new_entropy + 0.1) / (new_entropy + 0.1)
         else:
@@ -338,4 +344,7 @@ if __name__=="__main__":
     tree3.fit(train_data=X_train, train_label=y_train, is_continuous=True, method='c4.5')
     print('my decisionTree 3 score: %f'
           % accuracy_score(tree3.predict(X_test), y_test))
-
+    tree4 = DecisionTree()
+    tree4.fit(train_data=X_train, train_label=y_train, is_continuous=True, method='c4.5', info_gain='gini')
+    print('my decisionTree 4 gini score: %f'
+          % accuracy_score(tree4.predict(X_test), y_test))

@@ -42,6 +42,8 @@ class LocalOutlierFactor(object):
             all_distance = np.zeros(self.instance_num)
             for idx, _instance in enumerate(self.instances):
                 all_distance[idx] = self.distance_function(self.instances[index], self.instances[idx])
+
+            # TODO: 此处进行sort会增加复杂度，应改写。
             all_distance_sorted_index = np.argsort(all_distance)
 
             # 使用k, 因为0为自己，与自己重复的点。

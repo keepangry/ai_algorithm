@@ -9,3 +9,14 @@
 @desc:
 '''
 
+
+def median(vector, type=1, is_avg=False):
+    """
+
+    :param vector:
+    :param type: 1 取中位数值， 0 取中位数的下标
+    :param is_avg: 当为偶数项时，是否取均值
+    :return:
+    """
+    pass
+
