@@ -68,12 +68,10 @@ class LinearRegression(object):
             curr_X = X
             curr_y = y
         elif self.optimize_method == 'stochastic_gradient_descent':
-            np.random.seed(self.random_state)
             choice_index = np.random.randint(self.train_num)
             curr_X = X[[choice_index]]
             curr_y = y[choice_index]
         elif self.optimize_method == 'batch_gradient_descent':
-            np.random.seed(self.random_state)
             if 0 < self.batch_num < 1:
                 # 无放回
                 choice_indexes = np.random.choice(self.train_num, replace=False, size=int(self.batch_num*self.train_num))
@@ -171,12 +169,12 @@ class LinearRegression(object):
 if __name__ == "__main__":
     diabetes = datasets.load_diabetes()
     # 选1个特征，目的用于可视化
-    # X = diabetes.data[:,[8]]
-    # y = diabetes.target
+    X = diabetes.data[:,[8]]
+    y = diabetes.target
 
     # 人造X
-    X = np.arange(0., 10., 0.2).reshape(50,1)
-    y = ( 2 * X + 5 + np.random.randn(1) ).reshape(50,)
+    # X = np.arange(0., 10., 0.2).reshape(50,1)
+    # y = ( 2 * X + 5 + np.random.randn(1) ).reshape(50,)
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
 
@@ -189,12 +187,13 @@ if __name__ == "__main__":
     # 随机梯度下降
     # lr = LinearRegression(optimize_method='stochastic_gradient_descent', learning_rate=0.01, min_iter_loss=0.000001)
     # lr = LinearRegression(optimize_method='batch_gradient_descent', batch_num=0.1, learning_rate=0.01, min_iter_loss=0.000001)
-    lr = LinearRegression(optimize_method='batch_gradient_descent', loss='lasso', alpha=1, batch_num=0.1, learning_rate=0.001, min_iter_loss=0.000001)
+    lr = LinearRegression(optimize_method='batch_gradient_descent', loss='square_loss', alpha=1, batch_num=0.2, learning_rate=0.01, min_iter_loss=1)
     lr.fit(X_train, y_train)
     y_pred = lr.predict(X_test)
 
 
-    cls = linear_model.Lasso(alpha=1.0)
+    # cls = linear_model.Lasso(alpha=1.0)
+    cls = linear_model.LinearRegression()
     cls.fit(X_train, y_train)
     y_pred_sys = cls.predict(X_test)
 
