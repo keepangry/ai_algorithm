@@ -24,14 +24,16 @@ class LocalOutlierFactor(object):
         else:
             self.k = k
 
-        self.distance_function = euclidean
+        if distance_function == 'euclidean':
+            self.distance_function = euclidean
         # self.is_normalize = is_normalize
 
+    def run(self):
         self._compute_k_distance()
         self._compute_reach_distance()
         self._compute_local_reachability_density()
         self._compute_local_outlier_factor()
-        # self.local_outlier_factor
+        return self.local_outlier_factor
 
     def _compute_k_distance(self):
         """
@@ -141,8 +143,8 @@ if __name__=="__main__":
     ])
 
     lof = LocalOutlierFactor(instances=instances, k=3)
+    scores_pred = lof.run()
 
-    scores_pred = lof.local_outlier_factor
     threshold = 0.8
     x_norm, y_norm = zip(*instances[scores_pred <= threshold])
     x_anormal, y_anormal = zip(*instances[scores_pred > threshold])
