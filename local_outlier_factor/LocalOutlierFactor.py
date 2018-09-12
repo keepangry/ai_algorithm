@@ -11,7 +11,7 @@
 from matplotlib import pyplot as plt
 import numpy as np
 from util.distance import euclidean
-
+import heapq
 from itertools import combinations, combinations_with_replacement
 
 
@@ -19,7 +19,11 @@ class LocalOutlierFactor(object):
     def __init__(self, instances, k=3, is_normalize=False, distance_function='euclidean'):
         self.instances = instances
         self.instance_num = len(instances)
-        self.k = k
+        if k > self.instance_num-1:
+            raise Exception('k不能超过样本数减一')
+        else:
+            self.k = k
+
         self.distance_function = euclidean
         # self.is_normalize = is_normalize
 
@@ -28,7 +32,6 @@ class LocalOutlierFactor(object):
         self._compute_local_reachability_density()
         self._compute_local_outlier_factor()
         # self.local_outlier_factor
-
 
     def _compute_k_distance(self):
         """
@@ -44,13 +47,19 @@ class LocalOutlierFactor(object):
                 all_distance[idx] = self.distance_function(self.instances[index], self.instances[idx])
 
             # TODO: 此处进行sort会增加复杂度，应改写。
-            all_distance_sorted_index = np.argsort(all_distance)
+            # 使用排序获取topk
+            # all_distance_sorted_index = np.argsort(all_distance)
+            # the_k_distance = all_distance[all_distance_sorted_index[self.k]]
+            # nearest_k_index = all_distance_sorted_index[1:self.k+1]
 
-            # 使用k, 因为0为自己，与自己重复的点。
-            the_k_distance = all_distance[all_distance_sorted_index[self.k]]
+            # 使用堆获取topk
+            for_get_topk = np.vstack((all_distance, np.arange(len(all_distance)))).T
+            result = np.array(heapq.nsmallest(self.k+1, for_get_topk, key=lambda x: x[0]))
+            nearest_k_index = result[:, 1][1:].astype(np.int32)
+            the_k_distance = all_distance[nearest_k_index[-1]]
 
             self.the_k_distance[index] = the_k_distance
-            neighbours_idx.append(all_distance_sorted_index[1:self.k+1])
+            neighbours_idx.append(nearest_k_index)
         self.neighbours_idx = np.array(neighbours_idx)
 
     def _compute_reach_distance(self):
@@ -80,7 +89,6 @@ class LocalOutlierFactor(object):
                 sum_neighbours_reach_distance += self.reach_distance_2D[neighbour_idx][instance_index]
             self.local_reachability_density[instance_index] = self.k / sum_neighbours_reach_distance
 
-
     def _compute_local_outlier_factor(self):
         """
         计算离群点   该点的局部可达密度 大于 其邻域点的局部可达密度平均  则该点为离群点， 可定义阈值
@@ -93,12 +101,6 @@ class LocalOutlierFactor(object):
             for neighbour_idx in self.neighbours_idx[instance_index]:
                 sum_lrd_neighbour = self.local_reachability_density[neighbour_idx]
             self.local_outlier_factor[instance_index] = sum_lrd_neighbour / (self.k * lrd_instance)
-
-
-    def _euclidean(self, vec1, vec2):
-        return np.linalg.norm(vec1 - vec2)
-
-
 
 
 if __name__=="__main__":
@@ -133,21 +135,22 @@ if __name__=="__main__":
         (4.6033708001912093, 1.3375110154658127),
         (-0.685421751407983, -0.73115552984211407),
         (-2.3744241805625044, 1.3443896265777866),
-        (-8,-8),
+        (-10,-10),
+        (15,15),
         (20,20)
     ])
 
     lof = LocalOutlierFactor(instances=instances, k=3)
 
     scores_pred = lof.local_outlier_factor
-    threshold = 1
+    threshold = 0.8
     x_norm, y_norm = zip(*instances[scores_pred <= threshold])
     x_anormal, y_anormal = zip(*instances[scores_pred > threshold])
     plt.scatter(x_norm, y_norm, 20, color="#0000FF")
     plt.scatter(x_anormal, y_anormal, 20, color="red")
     plt.show()
 
-    #
+
     # x, y = zip(*instances)
     # plt.scatter(x, y, 20, color="#0000FF")
     #
