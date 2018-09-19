@@ -11,7 +11,9 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.neighbors import LocalOutlierFactor
+# from sklearn.neighbors import LocalOutlierFactor
+from local_outlier_factor.LocalOutlierFactor import LocalOutlierFactor
+
 from scipy import stats
 
 # 构造训练样本
@@ -31,9 +33,9 @@ X_train = np.r_[X_train, np.random.uniform(low=-6, high=6, size=(n_outliers, 2))
 # clf = LocalOutlierFactor(n_neighbors=35, contamination=outliers_fraction)
 # y_pred = clf.fit_predict(X_train)
 # scores_pred = clf.negative_outlier_factor_
-from LocalOutlierFactor import LocalOutlierFactor
-lof = LocalOutlierFactor(instances=X_train, k=6)
-scores_pred = lof.local_outlier_factor
+lof = LocalOutlierFactor(instances=X_train, k=3)
+
+scores_pred = lof.fit()
 # threshold = stats.scoreatpercentile(scores_pred, 100 * (1-outliers_fraction))  # 根据异常样本比例，得到阈值，用于绘图
 
 threshold = 1
