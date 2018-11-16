@@ -19,13 +19,13 @@ signature_key = 'predict_images'
 input_key = 'images'
 output_key = 'scores'
 
-## tf.app.flags.DEFINE_string("valid_data", "viewfs://hadoop-meituan/user/hadoop-waimaircmining/yangsen07/deeplearning/demo/order_seq/saved_model/1", "valid_data")
+## tf.app.flags.DEFINE_string("valid_data", "viewfs://***/saved_model/1", "valid_data")
 ## print(tf.app.flags.FLAGS.valid_data)
 ## os.popen("hadoop fs -get {}/part*00000 valid_data".format(saved_model_hdfs))
-## hope dfs -get viewfs://hadoop-meituan/user/hadoop-waimaircmining/yangsen07/deeplearning/demo/order_seq/saved_model/1/* valid_data
+## hope dfs -get viewfs://***/saved_model/1/* valid_data
 
 # export_dir = "logs/saved_model/1"
-saved_model_hdfs = "viewfs://hadoop-meituan/user/hadoop-waimaircmining/yangsen07/deeplearning/demo/order_seq/saved_model/1"
+saved_model_hdfs = "viewfs://***/saved_model/1"
 export_dir = saved_model_hdfs
 
 """
