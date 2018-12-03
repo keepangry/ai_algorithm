@@ -61,8 +61,12 @@ class CARTRegression(object):
     简单版，假设二分类，假设连续变量，只做回归树。
     损失使用 平方损失。
     """
-    def __init__(self):
-        pass
+    def __init__(self, leaf_min_samples=3, max_depth=3):
+        self.tree = {}
+
+        # 如果节点样本数 小于等于leaf_min_samples 则不再进行分裂
+        self.leaf_min_samples = leaf_min_samples
+        self.max_depth = max_depth
 
     def fit(self, X_train, y_train):
         self.X_train = X_train
@@ -72,21 +76,21 @@ class CARTRegression(object):
         self.feature_num = self.X_train.shape[1]
         self.train_indexes = np.arange(self.train_num)
         self.feature_indexes = np.arange(self.feature_num)
-        self.tree = {}
-
-        # 如果节点样本数 小于等于leaf_min_samples 则不再进行分裂
-        self.leaf_min_samples = 3
 
         # todo: 此处暂不做bins优化，使用全局最优查找分裂点
         self.feature_values = [list(set(self.X_train[:, feature_index])) for feature_index in
                                range(self.feature_num)]
         # 建树
-        self.tree = self._create_branch(train_indexes=np.arange(self.train_num))
+        self.tree = self._create_branch(train_indexes=np.arange(self.train_num), depth=0)
 
-
-    def _create_branch(self, train_indexes):
-        # 不再分裂，返回均值
-        if train_indexes.shape[0] <= 3:
+    def _create_branch(self, train_indexes, depth):
+        depth += 1
+        # 不再分裂，返回均值.
+        if train_indexes.shape[0] <= self.leaf_min_samples:
+            print("stop split, leaf_min_samples")
+            return self.y_train[train_indexes].mean()
+        if depth > self.max_depth:
+            print("stop split, max_depth")
             return self.y_train[train_indexes].mean()
 
         # 遍历feature，找出增益最大的那个
@@ -111,8 +115,8 @@ class CARTRegression(object):
 
         left_branch_train_indexes = train_indexes[self.X_train[train_indexes][:, choice_feature_index] < choice_feature_split_value]
         right_branch_train_indexes = train_indexes[self.X_train[train_indexes][:, choice_feature_index] >= choice_feature_split_value]
-        branch['left'] = self._create_branch(left_branch_train_indexes)
-        branch['right'] = self._create_branch(right_branch_train_indexes)
+        branch['left'] = self._create_branch(left_branch_train_indexes, depth=depth)
+        branch['right'] = self._create_branch(right_branch_train_indexes, depth=depth)
 
         return branch
 
@@ -144,8 +148,6 @@ class CARTRegression(object):
                 max_loss_gain = loss_gain
                 best_split_value = split_value
         return max_loss_gain, best_split_value
-
-
 
     def _loss_gain_split_value(self, train_indexes, feature_index, split_value):
         """
@@ -187,8 +189,12 @@ class CARTRegression(object):
 
 
 if __name__ == "__main__":
-    diabetes = datasets.load_diabetes()
+    """
+        
+    """
 
+    # diabetes = datasets.load_diabetes()
+    #
     # # Use only one feature
     # diabetes_X = diabetes.data[:, np.newaxis, 2]
     #
@@ -215,8 +221,8 @@ if __name__ == "__main__":
     # print("Mean squared error: %.2f"
     #       % mean_squared_error(diabetes_y_test, diabetes_y_pred))
     # print('Variance score: %.2f' % r2_score(diabetes_y_test, diabetes_y_pred))
-
-    # plt.scatter(diabetes_X_test, diabetes_y_test,  color='black')
+    #
+    # plt.scatter(diabetes_X_test, diabetes_y_test, color='black')
     # plt.plot(diabetes_X_test, diabetes_y_pred, color='blue', linewidth=3)
     # plt.xticks(())
     # plt.yticks(())
@@ -251,9 +257,9 @@ if __name__ == "__main__":
     plt.figure()
     plt.scatter(X, y, s=20, edgecolor="black",
                 c="darkorange", label="data")
-    plt.plot(X_test, y_1, color="red",label="max_depth=2", linewidth=2)
-    plt.plot(X_test, y_cart_pred, color="cornflowerblue",label="cart", linewidth=2)
-    # plt.plot(X_test, y_2, color="yellowgreen", label="max_depth=5", linewidth=2)
+    plt.plot(X_test, y_1, color="red", label="max_depth=2", linewidth=2)
+    plt.plot(X_test, y_cart_pred, color="cornflowerblue", label="cart", linewidth=2)
+    plt.plot(X_test, y_2, color="yellowgreen", label="max_depth=5", linewidth=2)
 
     plt.xlabel("data")
     plt.ylabel("target")
@@ -262,6 +268,6 @@ if __name__ == "__main__":
     plt.show()
 
     #
-    print("cart        Mean squared error: %.2f" % mean_squared_error(y_test, y_cart_pred))
-    print("max_depth=2 Mean squared error: %.2f" % mean_squared_error(y_test, y_1))
-    print("max_depth=5 Mean squared error: %.2f" % mean_squared_error(y_test, y_2))
+    print("cart        Mean squared error: %.6f" % mean_squared_error(y_test, y_cart_pred))
+    print("max_depth=2 Mean squared error: %.6f" % mean_squared_error(y_test, y_1))
+    print("max_depth=5 Mean squared error: %.6f" % mean_squared_error(y_test, y_2))
