@@ -87,10 +87,10 @@ class CARTRegression(object):
         depth += 1
         # 不再分裂，返回均值.
         if train_indexes.shape[0] <= self.leaf_min_samples:
-            print("stop split, leaf_min_samples")
+            # print("stop split, leaf_min_samples")
             return self.y_train[train_indexes].mean()
         if depth > self.max_depth:
-            print("stop split, max_depth")
+            # print("stop split, max_depth")
             return self.y_train[train_indexes].mean()
 
         # 遍历feature，找出增益最大的那个
@@ -168,8 +168,8 @@ class CARTRegression(object):
         y_train_right = self.y_train[train_indexes][self.X_train[train_indexes][:, feature_index] > split_value]
         new_loss = mean_square(y_train_left) + mean_square(y_train_right)
         loss_gain = origin_loss - new_loss
-        if loss_gain < 0:
-            print(loss_gain)
+        # if loss_gain < 0:
+        #     print(loss_gain)
         return loss_gain
 
     def predict(self, X_test):
