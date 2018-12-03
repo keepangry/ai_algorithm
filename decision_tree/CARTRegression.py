@@ -2,7 +2,7 @@
 '''
 @author: yangsen
 @license: (C) Copyright 2013-2018, Node Supply Chain Manager Corporation Limited.
-@contact: deamoncao100@gmail.com
+@contact: yangsen
 @software: garner
 @file: CARTRegression.py
 @time: 18-8-23 下午9:12
