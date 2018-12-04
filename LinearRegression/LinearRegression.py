@@ -87,6 +87,8 @@ class LinearRegression(object):
     def gradient(self, theta, curr_hx, curr_X, curr_y):
         if self.loss == 'square_loss':
             gradient = (curr_hx - curr_y).dot(curr_X)
+        elif self.loss == 'abs_loss':
+            gradient = np.array( list(map(lambda x:1 if x>0 else -1,(curr_hx - curr_y))) ).dot(curr_X)
         elif self.loss == 'ridge':
             gradient = (curr_hx - curr_y).dot(curr_X) + self.alpha * theta
         elif self.loss == 'lasso':
@@ -132,7 +134,7 @@ class LinearRegression(object):
             # 方法2： 损失是否已经不在降低
             # 计算平方损失，即二阶范数的平方
             curr_loss = sum((X.dot(theta) - y)**2)
-            print("iter_num: {}, square loss: {}".format(iter_num, curr_loss))
+            # print("iter_num: {}, square loss: {}".format(iter_num, curr_loss))
 
             # 随机梯度下降经常会导致损失增加，因为他能跳出局部最小值点，该提前终止方法在随机梯度下降时略有问题
             # if pre_loss - curr_loss < self.min_iter_loss:
@@ -140,7 +142,6 @@ class LinearRegression(object):
             # else:
             #     pre_loss = curr_loss
         self.w = theta
-
 
     def fit_by_least_square(self, X, y):
         """
@@ -169,7 +170,7 @@ class LinearRegression(object):
 if __name__ == "__main__":
     diabetes = datasets.load_diabetes()
     # 选1个特征，目的用于可视化
-    X = diabetes.data[:,[8]]
+    X = diabetes.data[:, [8]]
     y = diabetes.target
 
     # 人造X
@@ -187,7 +188,8 @@ if __name__ == "__main__":
     # 随机梯度下降
     # lr = LinearRegression(optimize_method='stochastic_gradient_descent', learning_rate=0.01, min_iter_loss=0.000001)
     # lr = LinearRegression(optimize_method='batch_gradient_descent', batch_num=0.1, learning_rate=0.01, min_iter_loss=0.000001)
-    lr = LinearRegression(optimize_method='batch_gradient_descent', loss='square_loss', alpha=1, batch_num=0.2, learning_rate=0.01, min_iter_loss=1)
+    # lr = LinearRegression(optimize_method='batch_gradient_descent', loss='square_loss', alpha=1, batch_num=0.2, learning_rate=0.01, min_iter_loss=1)
+    lr = LinearRegression(optimize_method='batch_gradient_descent', loss='abs_loss', alpha=1, batch_num=0.2, learning_rate=0.1, min_iter_loss=1)
     lr.fit(X_train, y_train)
     y_pred = lr.predict(X_test)
 
