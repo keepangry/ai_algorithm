@@ -11,10 +11,11 @@
 
 import numpy as np
 
-def mean_square(vector):
-    return np.square(vector - vector.mean()).sum()
+
+def root_mean_square(vector1, vector2):
+    return np.sqrt(np.mean(np.square(vector1 - vector2)))
 
 
 if __name__ == "__main__":
-    a = np.array([1,2,3])
-    print(mean_square(a))
+
+    print(np.var(np.array([1, 2, 3])))
