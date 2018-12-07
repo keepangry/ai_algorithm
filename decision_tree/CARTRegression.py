@@ -36,7 +36,7 @@ CART跟C4.5一样，需要进行剪枝，采用CCP（代价复杂度的剪枝方
 
 from collections import Counter
 import numpy as np
-from util.loss import mean_square
+# from util.loss import mean_square
 
 
 import matplotlib.pyplot as plt
@@ -47,6 +47,18 @@ from sklearn.metrics import mean_squared_error, r2_score
 import numpy as np
 from sklearn.tree import DecisionTreeRegressor
 import matplotlib.pyplot as plt
+
+
+def mean_square(vector):
+    """
+    TODO:
+    在GradientBoostRegressionTree.py中，如果使用 np.sqrt(np.square(vector-vector.mean()).sum()) 则提升不动。
+    需要再考虑解决清除该问题！
+
+    :param vector:
+    :return:
+    """
+    return np.square(vector-vector.mean()).sum()
 
 
 class CARTRegression(object):
