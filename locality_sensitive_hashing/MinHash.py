@@ -93,5 +93,19 @@ if __name__ == "__main__":
     print(minhash.min_hash_vector(0))
     print(minhash.min_hash_vector(1))
     print(minhash.similarity(0, 1))
-
     print(minhash.similarity(1, 3))
+
+    # doc test
+    s = [
+        list(set("通过上面的方法处理过后，一篇文档可以用一个很小的签名矩阵来表示，节省下很多但是，还有一个问题没有解决，那就是如果有很多篇文档，那么如果要找出相似度很高的文档，")),
+        list(set("通过上面的方法处理过后，一篇文档可以用一个很小的签名矩阵很多内存空间；但是，还有一个问题没有解决，那就是如果有很多篇文档，那么如果要找出相似度很高的文档，")),
+        list(set("但是，还有一个问题没有解决，那就是如果有很多篇文档，那么如果要找出相似度很高的文档，其中一种办法就是先计算出所有文档的签名矩阵，然后依次两两比较签名矩")),
+        list(set("希运算模拟N次随机行打乱，然后统计|h(S1)=h(S2)|，就有 P=|h(S1)=h(S2)| / N 了。有了上一章节的证明，我们就可以通过多次进行最小哈希运算，来构造新的特征向量")),
+    ]
+
+    minhash = MinHash(hash_num=32, sets=s, random_state=2)
+    print(minhash.min_hash_vector(0))
+    print(minhash.min_hash_vector(1))
+    print(minhash.similarity(0, 1))
+    print(minhash.similarity(0, 2))
+    print(minhash.similarity(0, 3))
