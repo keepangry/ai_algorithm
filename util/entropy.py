@@ -1,9 +1,9 @@
 # encoding: utf-8
 '''
 @author: yangsen
-@license: (C) Copyright 2013-2018, Node Supply Chain Manager Corporation Limited.
-@contact: deamoncao100@gmail.com
-@software: garner
+@license:
+@contact: 0@keepangry.com
+@software:
 @file: entropy.py
 @time: 18-8-25 下午10:03
 @desc:
