@@ -70,7 +70,7 @@ class AdaBoosting(object):
             logging.info("weights_sum: %s" % weights.sum())
 
             error_rate = self.error_rate(instances=self.instances, labels=self.labels)
-            logging.info("error rate: %s", error_rate)
+            logging.warn("error rate: %s", error_rate)
             if error_rate == 0:
                 break
             logging.info("--"*20)
@@ -95,7 +95,8 @@ class AdaBoosting(object):
         pred_result[pred_result == 0] = 1
         return pred_result
 
-    def _decision_stump_instance_result(self, decision_info, instances):
+    @staticmethod
+    def _decision_stump_instance_result(decision_info, instances):
         """
 
         :param decision_info:
@@ -214,7 +215,7 @@ def cancer():
     X = breast_cancer.data
     y = (breast_cancer.target * 2) - 1
     return train_test_split(
-        X, y, test_size=0.33, random_state=42)
+        X, y, test_size=0.33, random_state=3)
 
 
 if __name__ == "__main__":
@@ -232,17 +233,15 @@ if __name__ == "__main__":
     #              np.array([1, 1, 1, -1, -1, -1, 1, 1, 1, -1]))
 
     error_rate = adaboost.error_rate(X_test, y_test)
-    print("score: ", 1 - error_rate)
+    print("my ada: %s" % (1 - error_rate))
 
     from sklearn.linear_model import LogisticRegression
-    clf = LogisticRegression(random_state=0, solver='lbfgs', multi_class='multinomial').fit(X_train, y_train)
+    clf = LogisticRegression(random_state=0, solver='lbfgs').fit(X_train, (y_train+1)/2)
     # lr_pred = clf.predict(X_test)
-    print(clf.score(X_test, y_test))
+    print("LR: %s" % clf.score(X_test, (y_test+1)/2))
 
     from sklearn.ensemble import AdaBoostClassifier
     from sklearn.tree import DecisionTreeClassifier
-    bdt = AdaBoostClassifier(DecisionTreeClassifier(max_depth=1),
-                         algorithm="SAMME",
-                         n_estimators=40)
+    bdt = AdaBoostClassifier(DecisionTreeClassifier(max_depth=1), n_estimators=200)
     bdt.fit(X_train, y_train)
-    print(bdt.score(X_test, y_test))
+    print("sklearn ada: %s" % bdt.score(X_test, y_test))
