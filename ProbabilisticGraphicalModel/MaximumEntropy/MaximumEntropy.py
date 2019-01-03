@@ -12,6 +12,7 @@ from sklearn.datasets import load_digits
 import numpy as np
 import math
 
+
 class MaximumEntropy(object):
 
     def __init__(self):
@@ -21,11 +22,8 @@ class MaximumEntropy(object):
         self.max_iter = 1000
         self.eps = 0.01   # 判断单维度收敛阈值
 
-
     def feature_transfrom(self, features, feature_names):
         return np.char.add(np.char.add(feature_names, self.feature_name_delimiter), features)
-
-
 
     def fit(self, X_train, y_train, feature_names=None):
         """
@@ -130,7 +128,7 @@ class MaximumEntropy(object):
                 xy = (feature_value, y)
                 if xy in self.xy2idx:
                     y_w_sum += self.W[self.xy2idx[xy]]
-            print(y_w_sum)
+            # print(y_w_sum)
             zx += math.exp(y_w_sum)
 
         P_yx = {}
@@ -143,7 +141,6 @@ class MaximumEntropy(object):
             p_yx = 1.0 / zx * math.exp(y_w_sum)
             P_yx[y] = p_yx
         return P_yx
-
 
     def _model_ep(self):
         self.P_xy = np.zeros(self.xy_num)
@@ -160,12 +157,12 @@ class MaximumEntropy(object):
                         self.P_xy[self.xy2idx[xy]] += 1.0 / self.train_num * p_yx
 
     def predict(self, X):
-        return self.P_yx(X)
+        return sorted(self.P_yx(X).items(), key=lambda x: x[1], reverse=True)[0][0]
 
 
 if __name__ == "__main__":
     # [天气、温度、时间、是否有伴、是否有车]
-    feature_names = np.array(['weather','temperature','time','is_together','is_car'])
+    feature_names = np.array(['weather', 'temperature', 'time', 'is_together', 'is_car'])
     features = np.array([
         # ['sunny','hot','morning', 1, 0],
         # ['sunny','cool','noon', 0, 0],
@@ -180,20 +177,21 @@ if __name__ == "__main__":
         ['rainy', 'cool', 'noon'],
         ['rainy', 'cold', 'night'],
     ])
-    # TODO： 最大熵可以是变长的。比如，文章中的词。
 
     # 是否出门
     labels = np.array([
-        1,1,0,1,0,0
+        1, 1, 0, 1, 0, 0
     ])
+    # 把每一个 X,y 的组合都是一个特征函数f.  (sunny,1) (sunny,0)
 
     maxent = MaximumEntropy()
     maxent.fit(features, labels)
+
     # maxent.fit(features, labels, feature_names=feature_names)
-    print(maxent.predict(['sunny','hot','noon','sunny']))
-    print(maxent.predict(['sunny','hot','noon']))
-    print(maxent.predict(['sunny','cold','noon']))
-    print(maxent.predict(['rainy','cold','night']))
+    print(maxent.predict(['sunny', 'hot', 'noon', 'sunny']))
+    print(maxent.predict(['sunny', 'hot', 'noon']))
+    print(maxent.predict(['sunny', 'cold', 'noon']))
+    print(maxent.predict(['rainy', 'cold', 'night']))
 
 
 
