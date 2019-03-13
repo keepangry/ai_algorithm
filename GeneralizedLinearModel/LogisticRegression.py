@@ -104,7 +104,11 @@ class LogisticRegression(object):
             curr_X, curr_y = self.gradient_descent_sample_choice(X, y)
             sample_num = curr_X.shape[0]
             h = self.h(W, curr_X)
-            W -= self.learning_rate * 1 / sample_num * ((h - curr_y).dot(curr_X) + self.regularizer_weight*W)
+
+            r = 0
+            if self.regularizer == 'l2':
+                r = self.regularizer_weight * W
+            W -= self.learning_rate * 1 / sample_num * ((h - curr_y).dot(curr_X) + r)
 
             # 计算loss
             loss = self.log_loss(W, X, y)
@@ -123,9 +127,6 @@ class LogisticRegression(object):
 
 if __name__ == "__main__":
     X_train, X_test, y_train, y_test = binary_iris(top_features=3, random_state=1)
-    clf = linear_model.LogisticRegression(C=1e5, solver='lbfgs')
-    clf.fit(X_train, y_train)
-    print("sklearn LR: %s" % clf.score(X_test, y_test))
 
     # lr = LogisticRegression(learning_rate=0.05, max_iter=1000)
     # lr.fit(X_train, y_train)
@@ -136,3 +137,7 @@ if __name__ == "__main__":
     lr.fit(X_train, y_train)
     y_pred = lr.predict(X_test)
     print(classification_report(y_test, y_pred, target_names=['label:0', 'label:1']))
+
+    clf = linear_model.LogisticRegression(C=1e5, solver='lbfgs')
+    clf.fit(X_train, y_train)
+    print("sklearn LR: %s" % clf.score(X_test, y_test))
