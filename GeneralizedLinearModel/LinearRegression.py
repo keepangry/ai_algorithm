@@ -4,7 +4,7 @@
 @license:
 @contact: 0@keepangry.com
 @software:
-@file: LinearRegression.py
+@file: GeneralizedLinearModel.py
 @time: 18-9-1 下午10:41
 @desc:
 
@@ -180,15 +180,15 @@ if __name__ == "__main__":
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
 
     # 最小二乘
-    # lr = LinearRegression('least_square')
+    # lr = GeneralizedLinearModel('least_square')
 
     # 全样本梯度下降
-    # lr = LinearRegression()
+    # lr = GeneralizedLinearModel()
 
     # 随机梯度下降
-    # lr = LinearRegression(optimize_method='stochastic_gradient_descent', learning_rate=0.01, min_iter_loss=0.000001)
-    # lr = LinearRegression(optimize_method='batch_gradient_descent', batch_num=0.1, learning_rate=0.01, min_iter_loss=0.000001)
-    # lr = LinearRegression(optimize_method='batch_gradient_descent', loss='square_loss', alpha=1, batch_num=0.2, learning_rate=0.01, min_iter_loss=1)
+    # lr = GeneralizedLinearModel(optimize_method='stochastic_gradient_descent', learning_rate=0.01, min_iter_loss=0.000001)
+    # lr = GeneralizedLinearModel(optimize_method='batch_gradient_descent', batch_num=0.1, learning_rate=0.01, min_iter_loss=0.000001)
+    # lr = GeneralizedLinearModel(optimize_method='batch_gradient_descent', loss='square_loss', alpha=1, batch_num=0.2, learning_rate=0.01, min_iter_loss=1)
     lr = LinearRegression(optimize_method='batch_gradient_descent', loss='abs_loss', alpha=1, batch_num=0.2, learning_rate=0.1, min_iter_loss=1)
     lr.fit(X_train, y_train)
     y_pred = lr.predict(X_test)

@@ -7,7 +7,7 @@
 # @Software: PyCharm
 import numpy as np
 from decision_tree.CARTRegression import CARTRegression
-from LinearRegression.LinearRegression import LinearRegression
+from GeneralizedLinearModel.LinearRegression import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.ensemble import GradientBoostingRegressor
 import matplotlib.pyplot as plt
