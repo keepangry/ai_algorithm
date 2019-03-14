@@ -11,6 +11,7 @@ from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 from sklearn import linear_model
 from sklearn.metrics import classification_report
+from sklearn.preprocessing import OneHotEncoder
 
 from util.dataset import multi_iris
 
@@ -30,16 +31,8 @@ class SoftmaxRegression(object):
         :param random_state:
         :param alpha: when loss in (ridge, lasso) alpha代表正则项系数
         """
-
         self.w = None
-
         self.max_iter = max_iter
-        """
-        # 最开始learning_rate设置为0.01，损失越来越大，很是纳闷，不知道哪里出问题。
-        最后发现是learning_rate 0.01过大导致的，因为如果是全体样本进行计算，梯度过大，容易跑飞，设置较小的learning_rate便正常了。
-
-        使用随机梯度下降，设置过小的learning_rate容易优化过慢
-        """
         self.learning_rate = learning_rate
         self.optimize_method = optimize_method
         self.random_state = random_state
@@ -56,6 +49,13 @@ class SoftmaxRegression(object):
     def fit(self, X, y):
         self.train_num = X.shape[0]
         self.feature_num = X.shape[1]
+
+        # 对y进行onehot
+        y = y.reshape(-1, 1)
+        enc = OneHotEncoder(dtype=int, categories='auto')
+        enc.fit(y)
+        y = enc.transform(y).toarray()
+
         self.category_num = y[0].shape[0]
 
         self.fit_by_gradient_descent(X, y)
@@ -117,12 +117,12 @@ class SoftmaxRegression(object):
             sample_num = curr_X.shape[0]
             h = self.h(W, curr_X)
 
-            # r = 0
-            # if self.regularizer == 'l2':
-            #     r = self.regularizer_weight * W
-            # (h - curr_y)
-
-            W -= self.learning_rate * 1 / sample_num * ((h - curr_y).dot(curr_X) + r)
+            r = 0
+            if self.regularizer == 'l2':
+                r = self.regularizer_weight * W
+            # TODO：关键是对 softmax 交叉熵损失 更新公式的推到。更新公式本身很简单。
+            # https://blog.csdn.net/tkyjqh/article/details/78367369
+            W -= self.learning_rate * 1 / sample_num * ((h - curr_y).T.dot(curr_X) + r)
 
             # 计算loss
             loss = self.cross_entropy_loss(W, X, y)
@@ -131,7 +131,7 @@ class SoftmaxRegression(object):
         self.w = W
 
     def predict(self, X):
-        return np.round(self.predict_prob(X)).astype(int)
+        return np.argmax(self.predict_prob(X),axis=1)
 
     def predict_prob(self, X):
         b = np.ones_like(X[:, [0]])
@@ -140,15 +140,13 @@ class SoftmaxRegression(object):
 
 
 if __name__ == "__main__":
-    X_train, X_test, y_train, y_test = multi_iris(top_features=4, random_state=1, onehot=True)
+    X_train, X_test, y_train, y_test = multi_iris(top_features=3, random_state=4, onehot=False)
 
-    sr = SoftmaxRegression(learning_rate=0.05, max_iter=1000)
+    sr = SoftmaxRegression(learning_rate=0.03, max_iter=2000, regularizer='l2')
     sr.fit(X_train, y_train)
-    exit()
     y_pred = sr.predict(X_test)
-    print(classification_report(y_test, y_pred, target_names=['label:0', 'label:1']))
+    print(classification_report(y_test, y_pred, target_names=['label:0', 'label:1', 'label:2']))
 
-    X_train, X_test, y_train, y_test = multi_iris(top_features=3, random_state=3, onehot=False)
     clf = linear_model.LogisticRegression(C=1e5, solver='lbfgs', multi_class='auto')
     clf.fit(X_train, y_train)
     print("sklearn LR: %s" % clf.score(X_test, y_test))
