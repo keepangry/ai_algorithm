@@ -120,7 +120,7 @@ class SoftmaxRegression(object):
             r = 0
             if self.regularizer == 'l2':
                 r = self.regularizer_weight * W
-            # TODO：关键是对 softmax 交叉熵损失 更新公式的推到。更新公式本身很简单。
+            # TODO：关键是对 softmax 交叉熵损失 更新公式的推到。更新公式本身很简单，都是差值乘以X
             # https://blog.csdn.net/tkyjqh/article/details/78367369
             W -= self.learning_rate * 1 / sample_num * ((h - curr_y).T.dot(curr_X) + r)
 

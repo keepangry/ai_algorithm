@@ -3,7 +3,7 @@
 # @Time    : 2019/1/10 10:28 AM
 # @Author  : yangsen
 # @Site    :
-# @File    : svd.py
+# @File    : svd.py.py
 # @Software: PyCharm
 import sys
 import numpy as np
