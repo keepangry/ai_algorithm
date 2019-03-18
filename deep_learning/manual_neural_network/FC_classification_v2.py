@@ -74,6 +74,8 @@ class BackPropagation(object):
 
     def train(self, X_train, y_train, X_test, y_test):
         self.train_num = X_train.shape[0]
+        self.X_test = X_test
+        self.y_test = y_test
 
         for i in range(30000):
             choice_indexes = np.random.choice(self.train_num, replace=True, size=self.batch_size)
@@ -94,8 +96,8 @@ class BackPropagation(object):
         # 损失
         if iter % 100 == 0:
             training_loss = np.mean(self.calc_loss(output, batch_y, type="cross_entropy"))
-            pred = self.predict(X_test)
-            valid_loss = np.mean(self.calc_loss(pred, y_test, type="cross_entropy"))
+            pred = self.predict(self.X_test)
+            valid_loss = np.mean(self.calc_loss(pred, self.y_test, type="cross_entropy"))
             print("training loss: %s, valid loss: %s" % (training_loss, valid_loss))
 
         # 反向传播
