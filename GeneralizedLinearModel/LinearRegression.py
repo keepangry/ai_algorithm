@@ -79,7 +79,7 @@ class LinearRegression(object):
                 choice_indexes = np.random.choice(self.train_num, replace=False, size=self.batch_num)
             else:
                 raise Exception("batch_num 参数错误")
-            curr_X = X[[choice_indexes]]
+            curr_X = X[choice_indexes]
             curr_y = y[choice_indexes]
 
         return curr_X, curr_y
