@@ -3,11 +3,11 @@
 # @Time    : 2019/3/18 9:53 AM
 # @Author  : yangsen
 # @Site    : 
-# @File    : bp.py
+# @File    : FC_regression_v1.py
 # @Software: PyCharm
 """
 回归、全连接前馈、平方损失
-
+fully connected
 """
 import numpy as np
 from sklearn.model_selection import train_test_split
@@ -27,7 +27,7 @@ def generate_dataset(ndim=3, batch_size=1000):
     return x, y.reshape((batch_size, 1))
 
 
-class bp(object):
+class back_propagation(object):
 
     W = []
     b = []
@@ -52,8 +52,8 @@ class bp(object):
 
         for i in range(30000):
             choice_indexes = np.random.choice(self.train_num, replace=False, size=self.batch_size)
-            batch_x = X[choice_indexes]
-            batch_y = y[choice_indexes]
+            batch_x = X_train[choice_indexes]
+            batch_y = y_train[choice_indexes]
             self.train_batch(batch_x, batch_y, iter=i)
 
     def train_batch(self, batch_x, batch_y, iter):
@@ -70,8 +70,8 @@ class bp(object):
         if iter % 100 == 0:
             training_loss = np.mean(self.calc_loss(output, batch_y))
             pred = self.predict(X_test)
-            valid_loss = np.mean(self.calc_loss(y_test, pred))
-            print("training loss: %s, valid loss: %s" % (training_loss, valid_loss))
+            valid_loss = np.mean(self.calc_loss(pred, y_test))
+            print("iter: %s, training loss: %s, valid loss: %s" % (iter, training_loss, valid_loss))
 
         # 反向传播
         backward_delta = [[] for _ in range(self.layer_num-1)]
@@ -113,8 +113,8 @@ class bp(object):
 
 if __name__ == "__main__":
     np.random.seed(1)
-    ndim = 5
-    bp = bp(structure=(ndim, 8, 4, 1))
+    ndim = 6
+    bp = back_propagation(structure=(ndim, 16, 8, 4, 1))
     X, y = generate_dataset(ndim=ndim)
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=2)
     bp.train(X_train, y_train, X_test, y_test)
