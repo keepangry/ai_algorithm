@@ -14,3 +14,14 @@ import numpy as np
 
 def euclidean(vec1, vec2):
     return np.linalg.norm(vec1 - vec2)
+
+
+def cos_sim(vec, vecs):
+    """Takes 2 vectors a, b and returns the cosine similarity according
+    to the definition of the dot product
+    """
+
+    dot_product = np.dot(vecs, vec)
+    norm_a = np.linalg.norm(vec)
+    norm_b = np.linalg.norm(vecs, axis=1)
+    return dot_product / (norm_a * norm_b)
