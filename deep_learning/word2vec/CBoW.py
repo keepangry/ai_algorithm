@@ -90,6 +90,7 @@ class CBOW(object):
         print()
 
     def train(self, iter=10000):
+        # TODO: word2vec是没有激活函数的。
         self.bp = BackPropagation(structure=(self.vocabulary_size, 10, self.vocabulary_size), learning_rate=0.01)
         for i in range(iter):
             batch_x, batch_y = self.gene_train_corpus().__next__()
