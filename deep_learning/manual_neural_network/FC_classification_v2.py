@@ -9,8 +9,9 @@
 分类、全连接前馈、sigmod激活函数、softmax、交叉熵损失
 fully connected
 """
-import numpy as np
 from util.dataset import multi_iris
+
+import numpy as np
 from sklearn.metrics import classification_report
 
 
@@ -44,16 +45,17 @@ def softmax(x):
 
 class BackPropagation(object):
 
-    W = []
-    b = []
-
-    def __init__(self, structure):
+    def __init__(self, structure, learning_rate=0.001):
+        self.W = []
+        self.b = []
         self.structure = structure
         self.layer_num = len(self.structure)
-        self.learning_rate = 0.001
+        self.learning_rate = learning_rate
         self.init_network()
         self.batch_size = 10
         self.activation = "relu"
+        self.X_test = None
+        self.y_test = None
 
         # 激活函数
         if self.activation == "sigmod":
@@ -71,6 +73,7 @@ class BackPropagation(object):
 
             self.W.append(np.random.randn(pre_layer_node_num*curr_layer_node_num).reshape((pre_layer_node_num, curr_layer_node_num)))
             self.b.append(np.random.randn(curr_layer_node_num))
+
 
     def train(self, X_train, y_train, X_test, y_test):
         self.train_num = X_train.shape[0]
@@ -96,9 +99,11 @@ class BackPropagation(object):
         # 损失
         if iter % 100 == 0:
             training_loss = np.mean(self.calc_loss(output, batch_y, type="cross_entropy"))
-            pred = self.predict(self.X_test)
-            valid_loss = np.mean(self.calc_loss(pred, self.y_test, type="cross_entropy"))
-            print("training loss: %s, valid loss: %s" % (training_loss, valid_loss))
+            valid_loss = -1
+            if self.X_test is not None:
+                pred = self.predict(self.X_test)
+                valid_loss = np.mean(self.calc_loss(pred, self.y_test, type="cross_entropy"))
+            print("iter: %s, training loss: %s, valid loss: %s" % (iter, training_loss, valid_loss))
 
         # 反向传播
         backward_delta = [[] for _ in range(self.layer_num-1)]
