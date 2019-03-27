@@ -59,7 +59,7 @@ class RegressionTree(object):
         :return:
         """
         # note: G / (H + λ)  先求和
-        return sum(self.grad[sample_indexes]) / (sum(self.hessian[sample_indexes]) + self.params['λ']))
+        return sum(self.grad[sample_indexes]) / (sum(self.hessian[sample_indexes]) + self.params['λ'])
 
     def _create_branch(self, train_indexes, depth):
         depth += 1
