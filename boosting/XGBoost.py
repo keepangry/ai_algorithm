@@ -58,7 +58,8 @@ class RegressionTree(object):
         计算叶子值。value即weight。
         :return:
         """
-        return sum(self.grad[sample_indexes]) / sum(self.hessian[sample_indexes] + self.params['λ'])
+        # note: G / (H + λ)  先求和
+        return sum(self.grad[sample_indexes]) / (sum(self.hessian[sample_indexes]) + self.params['λ']))
 
     def _create_branch(self, train_indexes, depth):
         depth += 1
